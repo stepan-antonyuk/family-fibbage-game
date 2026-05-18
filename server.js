@@ -515,8 +515,9 @@ app.get('/', (_req, res) => {
 
 app.get('/host', (req, res) => {
   if (!game.joinUrl) {
+    const proto = req.headers['x-forwarded-proto'] || 'http';
     const host = req.headers.host || `localhost:${PORT}`;
-    game.joinUrl = `http://${host}/`;
+    game.joinUrl = `${proto}://${host}/`;
   }
   res.sendFile(path.join(__dirname, 'public', 'host.html'));
 });
@@ -529,15 +530,14 @@ io.on('connection', (socket) => {
   // Host page
   if (auth.role === 'host') {
     socket.join('host');
-    if (!game.joinUrl) {
-      try {
-        const ref = socket.handshake.headers.referer;
-        if (ref) {
-          const u = new URL(ref);
-          game.joinUrl = `http://${u.host}/`;
-        }
-      } catch (_) {}
-    }
+    try {
+      const ref = socket.handshake.headers.referer;
+      if (ref) {
+        const u = new URL(ref);
+        const pathPrefix = u.pathname.replace(/\/[^/]*$/, '');
+        game.joinUrl = `${u.protocol}//${u.host}${pathPrefix}/`;
+      }
+    } catch (_) {}
     socket.emit('hostState', buildHostState());
     return;
   }
