@@ -150,7 +150,7 @@ function renderLobby(main, state, pd) {
       ? `<div class="host-big-url">${esc(state.joinUrl)}</div>`
       : ''}
     ${state.hasQr && state.joinUrl
-      ? `<img src="qr.png" alt="QR-код" style="height:160px;border-radius:12px;margin-bottom:24px" />`
+      ? `<img src="qr.png" alt="QR-код" style="height:160px;width:160px;border-radius:12px;margin-bottom:24px" />`
       : ''}
     <p style="color:#9ca3af;font-size:1.1rem;margin-bottom:16px">
       Откройте ссылку на телефоне, чтобы войти в игру.
